@@ -44,17 +44,17 @@ export const Badge = (props: Props) => {
         'background-color': props.badgeBackgroundColor ?? '#ffffff',
       }}
     >
-      Powered by
+      Created by
       <a
         ref={liteBadge}
-        href={'https://flowiseai.com'}
+        href={'https://127.0.0.1:32700'}
         target="_blank"
         rel="noopener noreferrer"
         class="lite-badge"
         id="lite-badge"
         style={{ 'font-weight': 'bold', color: props.poweredByTextColor ?? defaultTextColor }}
       >
-        <span> Flowise</span>
+        <span> Blazux !</span>
       </a>
     </span>
   );
