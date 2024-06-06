@@ -1,6 +1,7 @@
 import { observersConfigType } from './components/Bot';
 type BotProps = {
     chatflowid: string;
+    user: string;
     apiHost?: string;
     chatflowConfig?: Record<string, unknown>;
     observersConfig?: observersConfigType;

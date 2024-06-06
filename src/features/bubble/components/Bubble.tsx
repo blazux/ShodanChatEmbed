@@ -71,6 +71,7 @@ export const Bubble = (props: BubbleProps) => {
             feedback={bubbleProps.theme?.chatWindow?.feedback}
             fontSize={bubbleProps.theme?.chatWindow?.fontSize}
             chatflowid={props.chatflowid}
+            user={props.user}
             chatflowConfig={props.chatflowConfig}
             apiHost={props.apiHost}
             observersConfig={props.observersConfig}

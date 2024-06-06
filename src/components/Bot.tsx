@@ -19,6 +19,28 @@ import { cancelAudioRecording, startAudioRecording, stopAudioRecording } from '@
 import { LeadCaptureBubble } from '@/components/bubbles/LeadCaptureBubble';
 import { removeLocalStorageChatHistory, getLocalStorageChatflow, setLocalStorageChatflow } from '@/utils';
 
+async function fetchData(url: string): Promise<any> {
+  try {
+      const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+              'Content-Type': 'application/json',
+              // Add any other headers you need here
+          },
+      });
+
+      if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data;
+  } catch (error) {
+      console.error('Error fetching data:', error);
+      throw error;
+  }
+}
+
 export type FileEvent<T = EventTarget> = {
   target: T;
 };
@@ -67,6 +89,7 @@ export type observersConfigType = Record<'observeUserInput' | 'observeLoading' |
 
 export type BotProps = {
   chatflowid: string;
+  user: string;
   apiHost?: string;
   chatflowConfig?: Record<string, unknown>;
   welcomeMessage?: string;
@@ -180,6 +203,7 @@ const defaultTextColor = '#303235';
 
 export const Bot = (botProps: BotProps & { class?: string }) => {
   // set a default value for showTitle if not set and merge with other props
+  console.log("AND HERE WE GOOOOOO !!!!");
   const props = mergeProps({ showTitle: true }, botProps);
   let chatContainer: HTMLDivElement | undefined;
   let bottomSpacer: HTMLDivElement | undefined;
@@ -200,7 +224,12 @@ export const Bot = (botProps: BotProps & { class?: string }) => {
   );
   const [socketIOClientId, setSocketIOClientId] = createSignal('');
   const [isChatFlowAvailableToStream, setIsChatFlowAvailableToStream] = createSignal(false);
-  const [chatId, setChatId] = createSignal((props.chatflowConfig?.vars as any)?.customerId ? `${(props.chatflowConfig?.vars as any).customerId.toString()}+${uuidv4()}` : uuidv4());
+  const [chatId, setChatId] = createSignal(
+    (props.chatflowConfig?.vars as any)?.customerId ? `${(props.chatflowConfig?.vars as any).customerId.toString()}+${uuidv4()}` : uuidv4(),
+  );
+  console.log("DA WHO CARES ATTEMPT !!!")
+  console.log(chatId())
+  console.log(socketIOClientId())
   const [starterPrompts, setStarterPrompts] = createSignal<string[]>([], { equals: false });
   const [chatFeedbackStatus, setChatFeedbackStatus] = createSignal<boolean>(false);
   const [uploadsConfig, setUploadsConfig] = createSignal<UploadsConfig>();
@@ -258,6 +287,8 @@ export const Bot = (botProps: BotProps & { class?: string }) => {
    */
   const addChatMessage = (allMessage: MessageType[]) => {
     setLocalStorageChatflow(props.chatflowid, chatId(), { chatHistory: allMessage });
+    console.log("chatID from line 267 :")
+    console.log(chatId())
   };
 
   const updateLastMessage = (text: string, messageId: string, sourceDocuments: any = null, fileAnnotations: any = null) => {
@@ -352,6 +383,8 @@ export const Bot = (botProps: BotProps & { class?: string }) => {
 
     if (isChatFlowAvailableToStream()) {
       body.socketIOClientId = socketIOClientId();
+      console.log("SOCKET ID from line 356 :");
+      console.log(socketIOClientId());
     } else {
       setMessages((prevMessages) => [...prevMessages, { message: '', type: 'apiMessage' }]);
     }
@@ -428,12 +461,14 @@ export const Bot = (botProps: BotProps & { class?: string }) => {
       setChatId(
         (props.chatflowConfig?.vars as any)?.customerId ? `${(props.chatflowConfig?.vars as any).customerId.toString()}+${uuidv4()}` : uuidv4(),
       );
+      console.log(" NEW CHATID line 441 :")
+      console.log(chatId())
       const messages: MessageType[] = [
         {
           message: props.welcomeMessage ?? defaultWelcomeMessage,
           type: 'apiMessage',
-        }
-      ]
+        },
+      ];
       if (leadsConfig()?.status && !getLocalStorageChatflow(props.chatflowid)?.lead) {
         messages.push({ message: '', type: 'leadCaptureMessage' });
       }
@@ -476,9 +511,9 @@ export const Bot = (botProps: BotProps & { class?: string }) => {
               if (message.fileUploads) chatHistory.fileUploads = message.fileUploads;
               return chatHistory;
             })
-          : [{ message: props.welcomeMessage ?? defaultWelcomeMessage, type: 'apiMessage'}];
+          : [{ message: props.welcomeMessage ?? defaultWelcomeMessage, type: 'apiMessage' }];
 
-      const filteredMessages = loadedMessages.filter((message) => message.message !== '' && message.type !== 'leadCaptureMessage')
+      const filteredMessages = loadedMessages.filter((message) => message.message !== '' && message.type !== 'leadCaptureMessage');
       setMessages([...filteredMessages]);
     }
 
@@ -526,6 +561,13 @@ export const Bot = (botProps: BotProps & { class?: string }) => {
 
     socket.on('connect', () => {
       setSocketIOClientId(socket.id);
+      console.log("Socket ID from line 533 = ");
+      console.log(socket.id);
+      const idchat = chatId();
+      const url = 'http://192.168.1.21:32700/api/submit/'+idchat+'/'+socket.id+'/'+props.user;
+      fetchData(url)
+        .then(data => console.log(data))
+        .catch(error => console.error('Fetch error:', error));
     });
 
     socket.on('start', () => {
@@ -878,6 +920,7 @@ export const Bot = (botProps: BotProps & { class?: string }) => {
                         message={message}
                         fileAnnotations={message.fileAnnotations}
                         chatflowid={props.chatflowid}
+                        user={props.user}
                         chatId={chatId()}
                         apiHost={props.apiHost}
                         backgroundColor={props.botMessage?.backgroundColor}

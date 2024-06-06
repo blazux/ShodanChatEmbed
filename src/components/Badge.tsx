@@ -44,7 +44,7 @@ export const Badge = (props: Props) => {
         'background-color': props.badgeBackgroundColor ?? '#ffffff',
       }}
     >
-      Created by
+      by
       <a
         ref={liteBadge}
         href={'https://127.0.0.1:32700'}
@@ -54,7 +54,7 @@ export const Badge = (props: Props) => {
         id="lite-badge"
         style={{ 'font-weight': 'bold', color: props.poweredByTextColor ?? defaultTextColor }}
       >
-        <span> Blazux !</span>
+        <span> TriOptimum Corporation </span>
       </a>
     </span>
   );

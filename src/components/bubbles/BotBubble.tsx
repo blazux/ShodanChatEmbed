@@ -9,6 +9,7 @@ import FeedbackContentDialog from '../FeedbackContentDialog';
 type Props = {
   message: MessageType;
   chatflowid: string;
+  user: string;
   chatId: string;
   apiHost?: string;
   fileAnnotations?: any;

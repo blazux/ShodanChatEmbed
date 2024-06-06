@@ -3,6 +3,7 @@ import { observersConfigType } from './components/Bot';
 /* eslint-disable solid/reactivity */
 type BotProps = {
   chatflowid: string;
+  user: string;
   apiHost?: string;
   chatflowConfig?: Record<string, unknown>;
   observersConfig?: observersConfigType;
