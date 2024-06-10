@@ -21,23 +21,23 @@ import { removeLocalStorageChatHistory, getLocalStorageChatflow, setLocalStorage
 
 async function fetchData(url: string): Promise<any> {
   try {
-      const response = await fetch(url, {
-          method: 'GET',
-          headers: {
-              'Content-Type': 'application/json',
-              // Add any other headers you need here
-          },
-      });
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        // Add any other headers you need here
+      },
+    });
 
-      if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-      }
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
 
-      const data = await response.json();
-      return data;
+    const data = await response.json();
+    return data;
   } catch (error) {
-      console.error('Error fetching data:', error);
-      throw error;
+    console.error('Error fetching data:', error);
+    throw error;
   }
 }
 
@@ -203,7 +203,7 @@ const defaultTextColor = '#303235';
 
 export const Bot = (botProps: BotProps & { class?: string }) => {
   // set a default value for showTitle if not set and merge with other props
-  console.log("AND HERE WE GOOOOOO !!!!");
+  console.log('AND HERE WE GOOOOOO !!!!');
   const props = mergeProps({ showTitle: true }, botProps);
   let chatContainer: HTMLDivElement | undefined;
   let bottomSpacer: HTMLDivElement | undefined;
@@ -227,9 +227,9 @@ export const Bot = (botProps: BotProps & { class?: string }) => {
   const [chatId, setChatId] = createSignal(
     (props.chatflowConfig?.vars as any)?.customerId ? `${(props.chatflowConfig?.vars as any).customerId.toString()}+${uuidv4()}` : uuidv4(),
   );
-  console.log("DA WHO CARES ATTEMPT !!!")
-  console.log(chatId())
-  console.log(socketIOClientId())
+  console.log('DA WHO CARES ATTEMPT !!!');
+  console.log(chatId());
+  console.log(socketIOClientId());
   const [starterPrompts, setStarterPrompts] = createSignal<string[]>([], { equals: false });
   const [chatFeedbackStatus, setChatFeedbackStatus] = createSignal<boolean>(false);
   const [uploadsConfig, setUploadsConfig] = createSignal<UploadsConfig>();
@@ -287,8 +287,8 @@ export const Bot = (botProps: BotProps & { class?: string }) => {
    */
   const addChatMessage = (allMessage: MessageType[]) => {
     setLocalStorageChatflow(props.chatflowid, chatId(), { chatHistory: allMessage });
-    console.log("chatID from line 267 :")
-    console.log(chatId())
+    console.log('chatID from line 267 :');
+    console.log(chatId());
   };
 
   const updateLastMessage = (text: string, messageId: string, sourceDocuments: any = null, fileAnnotations: any = null) => {
@@ -383,7 +383,7 @@ export const Bot = (botProps: BotProps & { class?: string }) => {
 
     if (isChatFlowAvailableToStream()) {
       body.socketIOClientId = socketIOClientId();
-      console.log("SOCKET ID from line 356 :");
+      console.log('SOCKET ID from line 356 :');
       console.log(socketIOClientId());
     } else {
       setMessages((prevMessages) => [...prevMessages, { message: '', type: 'apiMessage' }]);
@@ -461,8 +461,10 @@ export const Bot = (botProps: BotProps & { class?: string }) => {
       setChatId(
         (props.chatflowConfig?.vars as any)?.customerId ? `${(props.chatflowConfig?.vars as any).customerId.toString()}+${uuidv4()}` : uuidv4(),
       );
-      console.log(" NEW CHATID line 441 :")
-      console.log(chatId())
+      console.log(' NEW CHATID line 441 :');
+      console.log(chatId());
+      const idchat = chatId();
+      const url = 'http://192.168.1.21:32700/api/submit/' + props.user + '/' + idchat + '/oldone';
       const messages: MessageType[] = [
         {
           message: props.welcomeMessage ?? defaultWelcomeMessage,
@@ -561,13 +563,13 @@ export const Bot = (botProps: BotProps & { class?: string }) => {
 
     socket.on('connect', () => {
       setSocketIOClientId(socket.id);
-      console.log("Socket ID from line 533 = ");
+      console.log('Socket ID from line 533 = ');
       console.log(socket.id);
       const idchat = chatId();
-      const url = 'http://192.168.1.21:32700/api/submit/'+idchat+'/'+socket.id+'/'+props.user;
+      const url = 'http://192.168.1.21:32700/api/submit/' + props.user + '/' + idchat + '/' + socket.id;
       fetchData(url)
-        .then(data => console.log(data))
-        .catch(error => console.error('Fetch error:', error));
+        .then((data) => console.log(data))
+        .catch((error) => console.error('Fetch error:', error));
     });
 
     socket.on('start', () => {
